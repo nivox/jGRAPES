@@ -1,0 +1,7 @@
+*.o
+*.so
+*.dylib
+lib*.a
+build/
+native/jni-inc
+native/include/grapes
