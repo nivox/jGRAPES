@@ -135,7 +135,10 @@ JNIEXPORT void JNICALL Java_jgrapes_PeerSampler_removePeer
   n = createStructFromNodeID(env, nodeID);
   if (!n) return;
 
-  psample_remove_peer(ps, n);
+  if (psample_remove_peer(ps, n) < 0) {
+  JNU_ThrowByName(env, "jgrapes/JGrapesException",
+                    "Error removing peer");
+  }
   free(n);
 }
 
@@ -146,7 +149,7 @@ JNIEXPORT void JNICALL Java_jgrapes_PeerSampler_addPeer
   struct nodeID *n;
   jsize metadata_size;
   int8_t *c_metadata;
-
+  int res;
 
   ps = (struct psample_context *) get_PeerSampler_nativeID(env, obj);
   if (!ps) return;
@@ -165,9 +168,15 @@ JNIEXPORT void JNICALL Java_jgrapes_PeerSampler_addPeer
     }
     (*env)->GetByteArrayRegion(env, metadata, 0, metadata_size, c_metadata);
 
-    psample_add_peer(ps, n, c_metadata, metadata_size);
+    res = psample_add_peer(ps, n, c_metadata, metadata_size);
   } else {
-    psample_add_peer(ps, n, NULL, 0);
+    res = psample_add_peer(ps, n, NULL, 0);
+  }
+
+  if (res < 0) {
+    JNU_ThrowByName(env, "jgrapes/JGrapesException",
+                    "Error adding peer to cache");
+    return;
   }
 }
 
@@ -191,7 +200,10 @@ JNIEXPORT void JNICALL Java_jgrapes_PeerSampler_changeMetadata
   }
   (*env)->GetByteArrayRegion(env, metadata, 0, metadata_size, c_metadata);
 
-  psample_change_metadata(ps,c_metadata, metadata_size);
+  if (psample_change_metadata(ps,c_metadata, metadata_size) < 0) {
+    JNU_ThrowByName(env, "jgrapes/JGrapesException",
+                    "Error changing the metadata");
+  }
   return;
 }
 
