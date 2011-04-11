@@ -1,3 +1,8 @@
+/*
+ *  Copyright (c) 2011 Andrea Zito
+ *
+ *  This is free software; see lgpl-2.1.txt
+ */
 package jgrapes;
 
 import jgrapes.NetworkHelper;

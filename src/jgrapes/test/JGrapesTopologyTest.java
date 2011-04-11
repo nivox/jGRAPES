@@ -1,3 +1,8 @@
+/*
+ *  Copyright (c) 2011 Andrea Zito
+ *
+ *  This is free software; see lgpl-2.1.txt
+ */
 package jgrapes.test;
 
 import java.io.BufferedReader;
@@ -23,6 +28,9 @@ import jgrapes.NodeID;
 import jgrapes.PeerSampler;
 import jgrapes.ReceivedData;
 
+/**
+ * This class takes care of kill all started processes
+ */
 class ShutdownHook extends Thread{
   private Process pslist[];
 
@@ -37,6 +45,9 @@ class ShutdownHook extends Thread{
   }
 }
 
+/**
+ * This class print the piped process stream
+ */
 class ProcessOutputPrinter extends Thread {
   private Process p;
 
@@ -58,7 +69,9 @@ class ProcessOutputPrinter extends Thread {
   }
 }
 
-
+/**
+ * This class implements a simple topology testing program
+ */
 public class JGrapesTopologyTest implements Runnable {
 
   protected NetworkHelper nh;
@@ -274,7 +287,9 @@ public class JGrapesTopologyTest implements Runnable {
         }
 
         System.out.println("Adding bootstrap peer");
-        localInstance.ps.addPeer(bootstrapNode, null);
+        try {
+          localInstance.ps.addPeer(bootstrapNode, null);
+        } catch (Exception e) {e.printStackTrace();}
       }
       localInstance.run();
     }

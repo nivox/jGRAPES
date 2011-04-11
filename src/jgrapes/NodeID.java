@@ -1,3 +1,8 @@
+/*
+ *  Copyright (c) 2011 Andrea Zito
+ *
+ *  This is free software; see lgpl-2.1.txt
+ */
 package jgrapes;
 
 import java.net.InetAddress;
@@ -5,12 +10,27 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 
+/**
+ * Class that describe a node
+ *
+ * @author Andrea Zito <zito.andrea@gmail.com>
+ */
 public class NodeID {
   protected String ip;
   protected int port;
 
+  /**
+   * Creates an empty node
+   */
   protected NodeID() {}
 
+  /**
+   * Crates a node from the specified address without checking the validity of the address
+   *
+   * @param address node address (string of the form ip:port)
+   * @return NodeID instance
+   * @throw IllegalArgumentException invalid port number
+   */
   protected static NodeID getUnresolvedNodeID(String address) {
     String[] addrComponents;
     NodeID n;
@@ -29,13 +49,18 @@ public class NodeID {
     } catch (Exception e) {
       System.err.println("getUnresolvedNodeID: " + address);
       e.printStackTrace();
-      throw new IllegalArgumentException("FUUUUUUUUUUCK!");
     }
 
     return n;
   }
 
-
+  /**
+   * Builds a NodeID representation of the specified address
+   *
+   * @param nodeAddr address of the node (string of the form ip:port)
+   * @throws UnknownHostException invalid ip address
+   * @throws IllegalArgumentException invalid port number
+   */
   public NodeID(String nodeAddr) throws UnknownHostException {
     String[] addrComponents;
     InetAddress ipAddr;
@@ -60,14 +85,29 @@ public class NodeID {
     }
   }
 
+  /**
+   * Return the InetSocketAddress for the current node
+   *
+   * @return InetSocketAddress of current node
+   */
   public InetSocketAddress getSocketAddress() {
     return InetSocketAddress.createUnresolved(ip, port);
   }
 
+  /**
+   * Return the ip address of the current node
+   *
+   * @return ip address of current node
+   */
   public String getIpAddress() {
     return ip;
   }
 
+  /**
+   * Return the port number of the current node
+   *
+   * @return port number of current node
+   */
   public int getPort() {
     return port;
   }

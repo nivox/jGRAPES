@@ -1,10 +1,21 @@
+/*
+ *  Copyright (c) 2011 Andrea Zito
+ *
+ *  This is free software; see lgpl-2.1.txt
+ */
 package jgrapes;
 
 import jgrapes.NetworkHelper;
 import jgrapes.CloudHelper;
 import jgrapes.PeerSampler;
 
-public class JGrapes {
+
+/**
+ * This class acts as the single access point to the GRAPES modules.
+ *
+ * @author Andrea Zito <zito.andrea@gmail.com>
+ */
+public abstract class JGrapes {
   /* Lets make sure the grapes library is loaded */
   static {
     System.loadLibrary("jgrapes");
@@ -59,7 +70,7 @@ public class JGrapes {
   }
 
   /**
-   * Builds and initialize a new PeerSampler instance.
+   * Initialize and returns a PeerSampler instance.
    *
    * @param nh NetworkHelper instance associated to this PeerSampler
    * @param myMetadata metadata associated to the local node
