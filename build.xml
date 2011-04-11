@@ -1,5 +1,6 @@
 <project name="jgrapes" default="compile" basedir=".">
     <description>
+      Java bindings for GRAPES: the Generic Resource-Aware P2P Environment for Streaming
     </description>
 
   <!-- set locations -->
