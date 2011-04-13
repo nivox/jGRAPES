@@ -33,8 +33,8 @@
   <property name="jgrapes-native.classes" value="jgrapes.PeerSampler,jgrapes.NetworkHelper,jgrapes.CloudHelper"/>
 
   <!-- set test class names -->
-  <property name="cloudcast-test" value="jgrapes.test.JGrapesCloudcastTest"/>
   <property name="topology-test" value="jgrapes.test.JGrapesTopologyTest"/>
+  <property name="topology-test-thread" value="jgrapes.test.JGrapesTopologyTestThread"/>
 
 
   <!--
@@ -95,9 +95,9 @@
       *                Run Target definition
       **********************************************************************
   -->
-  <target name="run-cloudcast-test" depends="compile, native" description="test: cloudcast">
+  <target name="run-topology-test" depends="compile, native" description="test: topology process based">
     <echo message="Invoking with args (use -Dargs='...' to set args): ${args}"/>
-    <java classname="${cloudcast-test}" fork="true">
+    <java classname="${topology-test}" fork="true">
       <!-- set classpath -->
       <classpath>
         <path refid="classpath.run"/>
@@ -113,17 +113,16 @@
     </java>
   </target>
 
-
-  <target name="run-topology-test" depends="compile, native" description="test: cloudcast">
+  <target name="run-topology-test-thread" depends="compile, native" description="test: topology thread based">
     <echo message="Invoking with args (use -Dargs='...' to set args): ${args}"/>
-    <java classname="${topology-test}" fork="true">
+    <java classname="${topology-test-thread}" fork="true">
       <!-- set classpath -->
       <classpath>
         <path refid="classpath.run"/>
       </classpath>
 
       <!-- set jvm arguments -->
-      <!-- <jvmarg value=""/> -->
+      <jvmarg value="-Xmx512M"/>
       <jvmarg value="-Djava.library.path=${nativesrc-dir}"/>
 
       <!-- set app arguments -->
