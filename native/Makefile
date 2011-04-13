@@ -31,6 +31,9 @@ libjgrapes: ${OBJS}
 	${CC} ${CFLAGS} ${SHARED_FLAGS} ${OBJS} ${DEPS} -o ${LIBJGRAPES} ${LDFLAGS}
 
 update-grapes:
+	@echo "Clean current version of GRAPES"
+	@rm -f ${NET_HELPER}
+	@rm -rf ${INCLUDE_DIR}/grapes
 	@echo "Building grapes from (specify with GRAPES_DIR=...): ${GRAPES_DIR}"
 	@cd ${GRAPES_SRC_DIR}; ${MAKE} ${GRAPES_TARGET}
 	@cd ${GRAPES_SRC_DIR}; ${MAKE} ${NET_HELPER}
