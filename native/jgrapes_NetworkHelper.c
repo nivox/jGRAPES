@@ -98,6 +98,7 @@ JNIEXPORT jobject JNICALL Java_jgrapes_NetworkHelper_recvFromPeer
   jbyteArray receivedBytes;
   jstring remoteAddr;
   jobject receivedData;
+  char addr[256];
 
 
   nodeID = (struct nodeID *) get_NetworkHelper_nativeID(env, obj);
@@ -134,7 +135,8 @@ JNIEXPORT jobject JNICALL Java_jgrapes_NetworkHelper_recvFromPeer
   }
 
   /* Create a String object containing the address of the remote peer */
-  remoteAddr = (*env)->NewStringUTF(env, node_addr(remote));
+  node_addr(remote, addr, 256);
+  remoteAddr = (*env)->NewStringUTF(env, addr);
   if (!remoteAddr) {
     free(remote);
     return NULL;

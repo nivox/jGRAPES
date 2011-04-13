@@ -64,6 +64,8 @@ jobject createNodeIDFromStruct(JNIEnv *env, struct nodeID *n)
   jclass nodeIDClass;
   jmethodID nodeIDBuilder;
   jobject nodeID;
+  jstring jAddr;
+  char addr[256];
 
   nodeIDClass = (*env)->FindClass(env, "jgrapes/NodeID");
   if (nodeIDClass == NULL) {
@@ -77,8 +79,9 @@ jobject createNodeIDFromStruct(JNIEnv *env, struct nodeID *n)
     return NULL; /* exception thrown */
   }
 
-  nodeID = (*env)->CallStaticObjectMethod(env, nodeIDClass, nodeIDBuilder,
-                                          node_addr(n));
+  node_addr(n, addr, 256);
+  jAddr = (*env)->NewStringUTF(env, addr);
+  nodeID = (*env)->CallStaticObjectMethod(env, nodeIDClass, nodeIDBuilder, jAddr);
   if ((*env)->ExceptionCheck(env)) {
     return NULL;
   }
@@ -100,6 +103,8 @@ jobjectArray createNodeIDArrayFromStructArray(JNIEnv *env, const struct nodeID *
   jobject nodeID;
   jobjectArray nodeIDarr;
   const struct nodeID *n;
+  char c_nodeAddr[256];
+  jstring nodeAddr;
   int i;
 
   nodeIDClass = (*env)->FindClass(env, "jgrapes/NodeID");
@@ -123,11 +128,8 @@ jobjectArray createNodeIDArrayFromStructArray(JNIEnv *env, const struct nodeID *
 
   /* populate NodeID array */
   for (i=0; i<arr_size; i++) {
-    jstring nodeAddr;
-    const char *c_nodeAddr;
-
     n = narr[i];
-    c_nodeAddr =  node_addr(n);
+    node_addr(n, c_nodeAddr, 256);
     nodeAddr = (*env)->NewStringUTF(env, c_nodeAddr);
     if (!nodeAddr) return NULL;
 
