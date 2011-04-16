@@ -19,7 +19,18 @@ JNI_INCLUDE_DIR = ./jni-inc
 
 OBJS = jgrapes_utils.o jgrapes_NetworkHelper.o jgrapes_PeerSampler.o jgrapes_CloudHelper.o
 DEPS = ${NET_HELPER}
+
+ifndef PLATFORM
+PLATFORM = unix
+endif
+
+ifeq (${PLATFORM}, unix)
+LIBJGRAPES = libjgrapes.so
+endif
+
+ifeq (${PLATFORM}, darwin)
 LIBJGRAPES = libjgrapes.dylib
+endif
 
 CFLAGS += -Wall -g -I${INCLUDE_DIR} -I${JNI_INCLUDE_DIR}
 LDFLAGS += -lgrapes

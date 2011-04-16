@@ -43,6 +43,21 @@
       **********************************************************************
   -->
   <target name="init">
+    <condition property="platform" value="unix">
+      <and>
+        <os family="unix"/>
+        <not> <os family="mac"/> </not>
+      </and>
+    </condition>
+
+    <condition property="platform" value="darwin">
+      <and>
+        <os family="unix"/>
+        <os family="mac"/>
+      </and>
+    </condition>
+
+    <echo message="Detected platform: ${platform}"/>
     <tstamp/>
   </target>
 
@@ -71,7 +86,9 @@
   </target>
 
   <target name="native" depends="jniheaders" description="build the native library">
-    <exec executable="${MAKE}" dir="${nativesrc-dir}" failonerror="true"/>
+    <exec executable="${MAKE}" dir="${nativesrc-dir}" failonerror="true">
+      <arg line="PLATFORM=${platform}"/>
+    </exec>
   </target>
 
   <target name="dist" depends="compile" description="generate the distribution" >
