@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "grapes/cloud_helper.h"
 #include "jgrapes_CloudHelper.h"
