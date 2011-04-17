@@ -33,7 +33,7 @@ LIBJGRAPES = libjgrapes.dylib
 endif
 
 CFLAGS += -Wall -g -I${INCLUDE_DIR} -I${JNI_INCLUDE_DIR}
-LDFLAGS += -lgrapes
+LDFLAGS += -L. -lgrapes
 SHARED_FLAGS = -shared -fPIC
 
 all: libjgrapes
