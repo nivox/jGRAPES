@@ -33,9 +33,7 @@
   <property name="jgrapes-native.classes" value="jgrapes.PeerSampler,jgrapes.NetworkHelper,jgrapes.CloudHelper"/>
 
   <!-- set test class names -->
-  <property name="topology-test" value="jgrapes.test.JGrapesTopologyTest"/>
-  <property name="topology-test-thread" value="jgrapes.test.JGrapesTopologyTestThread"/>
-
+  <property name="topology-test" value="jgrapes.test.TopologyTest"/>
 
   <!--
       *********************************************************************
@@ -122,23 +120,6 @@
 
       <!-- set jvm arguments -->
       <!-- <jvmarg value=""/> -->
-      <jvmarg value="-Djava.library.path=${nativesrc-dir}"/>
-
-      <!-- set app arguments -->
-      <arg line="${args}"/>
-
-    </java>
-  </target>
-
-  <target name="run-topology-test-thread" depends="compile, native" description="test: topology thread based">
-    <echo message="Invoking with args (use -Dargs='...' to set args): ${args}"/>
-    <java classname="${topology-test-thread}" fork="true">
-      <!-- set classpath -->
-      <classpath>
-        <path refid="classpath.run"/>
-      </classpath>
-
-      <!-- set jvm arguments -->
       <jvmarg value="-Xmx512M"/>
       <jvmarg value="-Djava.library.path=${nativesrc-dir}"/>
 
