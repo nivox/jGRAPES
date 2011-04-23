@@ -34,6 +34,7 @@
 
   <!-- set test class names -->
   <property name="topology-test" value="jgrapes.test.TopologyTest"/>
+  <property name="topology-statistics" value="jgrapes.test.statistics.TopologyStatistics"/>
 
   <!--
       *********************************************************************
@@ -120,6 +121,24 @@
 
       <!-- set jvm arguments -->
       <!-- <jvmarg value=""/> -->
+      <jvmarg value="-Xmx512M"/>
+      <jvmarg value="-Djava.library.path=${nativesrc-dir}"/>
+
+      <!-- set app arguments -->
+      <arg line="${args}"/>
+
+    </java>
+  </target>
+
+  <target name="run-topology-statistics" depends="compile, native" description="test: topology statistics aggregator">
+    <echo message="Invoking with args (use -Dargs='...' to set args): ${args}"/>
+    <java classname="${topology-statistics}" fork="true">
+      <!-- set classpath -->
+      <classpath>
+        <path refid="classpath.run"/>
+      </classpath>
+
+      <!-- set jvm arguments -->
       <jvmarg value="-Xmx512M"/>
       <jvmarg value="-Djava.library.path=${nativesrc-dir}"/>
 
