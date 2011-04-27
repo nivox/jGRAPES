@@ -16,6 +16,7 @@
 
   <!-- set constants -->
   <property name="MAKE" value="make"/>
+  <property name="nativelib-basename" value="libjgrapes"/>
 
   <!-- set paths -->
   <path id="classpath.compile">
@@ -90,10 +91,24 @@
     </exec>
   </target>
 
-  <target name="dist" depends="compile" description="generate the distribution" >
-    <mkdir dir="${dist-dir}"/>
+  <target name="dist" depends="compile, native" description="generate the distribution" >
+    <condition property="nativelib-name" value="${nativelib-basename}.so">
+      <and>
+        <os family="unix"/>
+        <not> <os family="mac"/> </not>
+      </and>
+    </condition>
 
-    <jar jarfile="${dist}/${jgrapes}-${version}.jar" basedir="${build}"/>
+    <condition property="nativelib-name" value="${nativelib-basename}.dylib">
+      <and>
+        <os family="unix"/>
+        <os family="mac"/>
+      </and>
+    </condition>
+
+    <mkdir dir="${dist-dir}"/>
+    <jar jarfile="${dist-dir}/${jgrapes}-${version}.jar" basedir="${build-dir}"/>
+    <copy file="${nativesrc-dir}/${nativelib-name}" toDir="${dist-dir}"/>
   </target>
 
   <target name="clean" description="clean up" >
