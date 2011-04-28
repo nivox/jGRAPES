@@ -29,9 +29,9 @@ ifeq (${PLATFORM}, darwin)
 LIBJGRAPES = libjgrapes.dylib
 endif
 
-CFLAGS += -Wall -g -I${INCLUDE_DIR} -I${JNI_INCLUDE_DIR}
+CFLAGS += -Wall -g -fPIC -I${INCLUDE_DIR} -I${JNI_INCLUDE_DIR}
 LDFLAGS += -L. -lgrapes
-SHARED_FLAGS = -shared -fPIC
+SHARED_FLAGS = -shared
 
 all: libjgrapes
 
@@ -44,7 +44,7 @@ update-grapes:
 	@rm -rf ${INCLUDE_DIR}/grapes
 	@echo "Building grapes from (specify with GRAPES_DIR=...): ${GRAPES_DIR}"
 	@cd ${GRAPES_SRC_DIR}; ${MAKE} ${GRAPES_TARGET}
-	@cd ${GRAPES_SRC_DIR}; ${MAKE} ${NET_HELPER}
+	@cd ${GRAPES_SRC_DIR}; CFLAGS=-fPIC ${MAKE} ${NET_HELPER}
 	@echo "Copying libgrapes and includes..."
 	@cp -f ${LIBGRAPES_PATH} .
 	@cp -f ${NETHELPER_PATH} .
