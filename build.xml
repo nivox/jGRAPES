@@ -9,6 +9,7 @@
   <property name="dist-dir"  location="dist"/>
   <property name="jniheaders-dir" location="native/jni-inc"/>
   <property name="nativesrc-dir" location="native/"/>
+  <property name="nativedist-dir" location="native/lib"/>
 
   <!-- set project metadata -->
   <property name="jgrapes" value="jgrapes"/>
@@ -74,7 +75,6 @@
     </javac>
   </target>
 
-
   <target name="jniheaders" depends="compile" description="build the jni heraders">
     <echo message="Building jni headers for: ${jgrapes-native.classes}"/>
     <mkdir dir="${jniheaders-dir}"/>
@@ -85,7 +85,24 @@
     </javah>
   </target>
 
+  <target name="update-grapes" description="builds and place the needed GRAPES components">
+    <fail unless="GRAPES_DIR" message="Specify the GRAPES root directory: ant update-grapes -DGRAPES_DIR=..."/>
+    <property name="grapes_dir_abs" location="${GRAPES_DIR}"/>
+
+    <exec executable="${MAKE}" dir="${nativesrc-dir}" failonerror="true">
+      <arg line="update-grapes GRAPES_DIR=${grapes_dir_abs}"/>
+    </exec>
+  </target>
+
   <target name="native" depends="jniheaders" description="build the native library">
+    <fail message="Update the grapes ditribution first: ant update-grapes">
+      <condition>
+        <not>
+          <available file="${nativesrc-dir}/include/grapes" type="dir"/>
+        </not>
+      </condition>
+    </fail>
+
     <exec executable="${MAKE}" dir="${nativesrc-dir}" failonerror="true">
       <arg line="PLATFORM=${platform}"/>
     </exec>
@@ -108,7 +125,16 @@
 
     <mkdir dir="${dist-dir}"/>
     <jar jarfile="${dist-dir}/${jgrapes}-${version}.jar" basedir="${build-dir}"/>
-    <copy file="${nativesrc-dir}/${nativelib-name}" toDir="${dist-dir}"/>
+    <copy toDir="${dist-dir}/lib">
+        <fileset dir="${nativedist-dir}"/>
+    </copy>
+
+    <copy toDir="${dist-dir}/lib">
+      <fileset dir="lib">
+        <include name="**/*.jar"/>
+      </fileset>
+    </copy>
+
   </target>
 
   <target name="clean" description="clean up" >
@@ -137,7 +163,7 @@
       <!-- set jvm arguments -->
       <!-- <jvmarg value=""/> -->
       <jvmarg value="-Xmx512M"/>
-      <jvmarg value="-Djava.library.path=${nativesrc-dir}"/>
+      <jvmarg value="-Djava.library.path=${nativedist-dir}"/>
 
       <!-- set app arguments -->
       <arg line="${args}"/>
@@ -155,7 +181,7 @@
 
       <!-- set jvm arguments -->
       <jvmarg value="-Xmx512M"/>
-      <jvmarg value="-Djava.library.path=${nativesrc-dir}"/>
+      <jvmarg value="-Djava.library.path=${nativedist-dir}"/>
 
       <!-- set app arguments -->
       <arg line="${args}"/>

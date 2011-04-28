@@ -5,8 +5,10 @@ LIBGRAPES = libgrapes.a
 NET_HELPER = net_helper${NH_INCARNATION}.o
 GRAPES_SRC_DIR = ${GRAPES_DIR}/src
 GRAPES_INC_DIR = ${GRAPES_DIR}/include
+DELEGATE_HELPERS_SRC_DIR = ${GRAPES_SRC_DIR}/CloudSupport
 
 GRAPES_TARGET = all
+DELEGATE_HELPERS_TARGET = delegate_helpers
 
 LIBGRAPES_PATH = ${GRAPES_SRC_DIR}/${LIBGRAPES}
 NETHELPER_PATH = ${GRAPES_SRC_DIR}/${NET_HELPER}
@@ -29,6 +31,8 @@ ifeq (${PLATFORM}, darwin)
 LIBJGRAPES = libjgrapes.dylib
 endif
 
+DESTDIR = lib
+
 CFLAGS += -Wall -g -fPIC -I${INCLUDE_DIR} -I${JNI_INCLUDE_DIR}
 LDFLAGS += -L. -lgrapes
 SHARED_FLAGS = -shared
@@ -37,6 +41,7 @@ all: libjgrapes
 
 libjgrapes: ${OBJS}
 	${CC} ${CFLAGS} ${SHARED_FLAGS} ${OBJS} ${DEPS} -o ${LIBJGRAPES} ${LDFLAGS}
+	@cp -f ${LIBJGRAPES} ${DESTDIR}
 
 update-grapes:
 	@echo "Clean current version of GRAPES"
@@ -49,6 +54,16 @@ update-grapes:
 	@cp -f ${LIBGRAPES_PATH} .
 	@cp -f ${NETHELPER_PATH} .
 	@cp -rf ${GRAPES_INC_DIR} ${INCLUDE_DIR}/grapes
+	@echo "Building delegate helpers..."
+	@cd ${DELEGATE_HELPERS_SRC_DIR}; ${MAKE} ${DELEGATE_HELPERS_TARGET}
+	@echo "Copying delegate_helpers..."
+	@mkdir -p ${DESTDIR}
+	@cp -f ${DELEGATE_HELPERS_SRC_DIR}/*.so ${DESTDIR}
+
 
 clean:
-	rm -f ${OBJS} ${LIBJGRAPES}
+	rm -rf ${INCLUDE_DIR}/grapes/
+	rm -f ${JNI_INCLUDE_DIR}/*
+	rm -rf ${DESTDIR}/*
+	rm -f
+	rm -f *.o *.a *.so *.dylib
