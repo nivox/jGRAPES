@@ -277,8 +277,10 @@ public class TopologyStatistics {
       for (TopologyNode n: localTNodes) {
         n.join();
       }
-      monitorNode.terminate();
-      monitorNode.join();
+      if (monitor) {
+        monitorNode.terminate();
+        monitorNode.join();
+      }
 
     } catch (Exception e) {
       e.printStackTrace();
