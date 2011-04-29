@@ -18,6 +18,7 @@
   <!-- set constants -->
   <property name="MAKE" value="make"/>
   <property name="nativelib-basename" value="libjgrapes"/>
+  <property name="test-classes" value="jgrapes/test/**/*,jgrapes/test"/>
 
   <!-- set paths -->
   <path id="classpath.compile">
@@ -124,17 +125,10 @@
     </condition>
 
     <mkdir dir="${dist-dir}"/>
-    <jar jarfile="${dist-dir}/${jgrapes}-${version}.jar" basedir="${build-dir}"/>
-    <copy toDir="${dist-dir}/lib">
+    <jar jarfile="${dist-dir}/${jgrapes}-${version}.jar" basedir="${build-dir}" excludes="${test-classes}"/>
+    <copy toDir="${dist-dir}/">
         <fileset dir="${nativedist-dir}"/>
     </copy>
-
-    <copy toDir="${dist-dir}/lib">
-      <fileset dir="lib">
-        <include name="**/*.jar"/>
-      </fileset>
-    </copy>
-
   </target>
 
   <target name="clean" description="clean up" >
