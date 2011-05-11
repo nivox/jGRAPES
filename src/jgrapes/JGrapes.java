@@ -33,6 +33,8 @@ public abstract class JGrapes {
     throws JGrapesException
   {
     long id = -1;
+    if (conf == null) conf = "";
+    if (ipAddr == null) throw new JGrapesException("Null ip address");
     try{
       id = NetworkHelper.init(ipAddr, port, conf);
     } catch(JGrapesException e){
@@ -56,6 +58,7 @@ public abstract class JGrapes {
     throws JGrapesException
   {
     long id = -1;
+    if (conf == null) conf = "";
     try{
       id = CloudHelper.init(nh.getNodeIdRefenece(), conf);
     } catch(JGrapesException e){
@@ -81,6 +84,7 @@ public abstract class JGrapes {
     throws JGrapesException
   {
     long id = -1;
+    if (conf == null) conf = "";
     try {
       id = PeerSampler.init(nh.getNodeIdRefenece(), myMetadata, conf);
     } catch(JGrapesException e){
