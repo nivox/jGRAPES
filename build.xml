@@ -91,7 +91,7 @@
     <property name="grapes_dir_abs" location="${GRAPES_DIR}"/>
 
     <exec executable="${MAKE}" dir="${nativesrc-dir}" failonerror="true">
-      <arg line="update-grapes GRAPES_DIR=${grapes_dir_abs}"/>
+      <arg line="update-grapes GRAPES_DIR=${grapes_dir_abs} PLATFORM=${platform}"/>
     </exec>
   </target>
 
@@ -110,20 +110,6 @@
   </target>
 
   <target name="dist" depends="compile, native" description="generate the distribution" >
-    <condition property="nativelib-name" value="${nativelib-basename}.so">
-      <and>
-        <os family="unix"/>
-        <not> <os family="mac"/> </not>
-      </and>
-    </condition>
-
-    <condition property="nativelib-name" value="${nativelib-basename}.dylib">
-      <and>
-        <os family="unix"/>
-        <os family="mac"/>
-      </and>
-    </condition>
-
     <mkdir dir="${dist-dir}"/>
     <jar jarfile="${dist-dir}/${jgrapes}-${version}.jar" basedir="${build-dir}" excludes="${test-classes}"/>
     <copy toDir="${dist-dir}/">

@@ -54,11 +54,12 @@ update-grapes:
 	@cp -f ${LIBGRAPES_PATH} .
 	@cp -f ${NETHELPER_PATH} .
 	@cp -rf ${GRAPES_INC_DIR} ${INCLUDE_DIR}/grapes
-	@echo "Building delegate helpers..."
-	@cd ${DELEGATE_HELPERS_SRC_DIR}; ${MAKE} ${DELEGATE_HELPERS_TARGET}
+	@echo "Building delegate helpers for..."
+	@cd ${DELEGATE_HELPERS_SRC_DIR}; ${MAKE} PLATFORM=${PLATFORM} ${DELEGATE_HELPERS_TARGET}
 	@echo "Copying delegate_helpers..."
 	@mkdir -p ${DESTDIR}
 	@cp -f ${DELEGATE_HELPERS_SRC_DIR}/*.so ${DESTDIR}
+	@cp -f ${DELEGATE_HELPERS_SRC_DIR}/*.dylib ${DESTDIR}
 
 
 clean:
