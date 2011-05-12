@@ -68,7 +68,7 @@ public class TopologyNode extends Thread {
     this.terminated = true;
   }
 
-  public void setActiveState(boolean state) {
+  public synchronized void setActiveState(boolean state) {
     this.activeState = state;
   }
 

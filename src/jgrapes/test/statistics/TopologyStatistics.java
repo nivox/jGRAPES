@@ -5,23 +5,24 @@
  */
 package jgrapes.test.statistics;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.UnknownHostException;
 
+import jgrapes.JGrapesException;
+import jgrapes.NodeID;
+import jgrapes.test.TopologyNode;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import jgrapes.JGrapesException;
-import jgrapes.NodeID;
-import jgrapes.test.TopologyNode;
 
 
 public class TopologyStatistics {
@@ -155,9 +156,9 @@ public class TopologyStatistics {
           String outpath = String.format("out-%s_%d.log", addr.getIpAddress(), (addr.getPort()+i));
           File outfile = new File(basedir + "/" + outpath);
           outfile.createNewFile();
-
-          PrintStream pstream = new PrintStream(outfile);
-          localTNodes[i] = new StatisticsTopologyNode(localTNode, nhConf, psConf, chConf, 1, pstream);
+          PrintStream out;
+          out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, true)));
+          localTNodes[i] = new StatisticsTopologyNode(localTNode, nhConf, psConf, chConf, 1, out);
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -223,52 +224,51 @@ public class TopologyStatistics {
 
     try {
       int count = 0;
-      while (count++ < iterations) {
-        System.out.println("# Starting iteration " + count + " of " + iterations);
-        int nodesToAddRemove;
-        long now = 0;
-        long startTime =  System.currentTimeMillis();
-        long endTime = startTime + (timeout * 60000);
-        long lengthTime = endTime - startTime;
-        int currentNodes = 0;
-        int progress = 0;
+      System.out.println("# Starting");
+      int nodesToAddRemove;
+      long now = 0;
+      long startTime =  System.currentTimeMillis();
+      long endTime = startTime + (timeout * 60000);
+      long lengthTime = endTime - startTime;
+      int currentNodes = 0;
+      int progress = 0;
 
-        while ((now = System.currentTimeMillis()) < endTime) {
-          long normTime = now - startTime;
-          int tmp;
+      while ((now = System.currentTimeMillis()) < endTime) {
+        long normTime = now - startTime;
+        int tmp;
 
-          nodesToAddRemove = growNodes(normTime, lengthTime) - currentNodes;
+        nodesToAddRemove = growNodes(normTime, lengthTime) - currentNodes;
 
-          tmp = (int)(((double)(normTime) / lengthTime) * 100);
-          if ((nodesToAddRemove > 0) || (tmp > progress)) {
-            progress = tmp;
-            print(String.format("@ time=%d progress=%d%% current_nodes=%d, after_nodes=%d (%d)",
-                                (System.currentTimeMillis() / 1000),
-                                progress,
-                                currentNodes,
-                                (currentNodes + nodesToAddRemove), nodesToAddRemove));
-          }
-          if (nodesToAddRemove > 0) {
-            for (int i=0; i < nodesToAddRemove; i++){
-              TopologyNode n = localTNodes[currentNodes++];
-              print("# activating node: " + n.getNodeID());
-              n.setActiveState(true);
-              n.addNode(new NodeID(String.format("0.0.0.0:0")));
-            }
-          } else {
-            for (int i=0; i < -nodesToAddRemove; i++) {
-              TopologyNode n = localTNodes[--currentNodes];
-              print("# deactivating node: " + n.getNodeID());
-              n.setActiveState(false);
-            }
-          }
-          Thread.sleep(1000);
+        tmp = (int)(((double)(normTime) / lengthTime) * 100);
+        if ((nodesToAddRemove > 0) || (tmp > progress)) {
+          progress = tmp;
+          print(String.format("@ time=%d progress=%d%% current_nodes=%d, after_nodes=%d (%d)",
+                              (System.currentTimeMillis() / 1000),
+                              progress,
+                              currentNodes,
+                              (currentNodes + nodesToAddRemove), nodesToAddRemove));
         }
-
-        for (TopologyNode localTNode: localTNodes) {
-          localTNode.setActiveState(false);
+        if (nodesToAddRemove > 0) {
+          for (int i=0; i < nodesToAddRemove; i++){
+            TopologyNode n = localTNodes[currentNodes++];
+            print("# activating node: " + n.getNodeID());
+            n.setActiveState(true);
+            n.addNode(new NodeID(String.format("0.0.0.0:0")));
+          }
+        } else {
+          for (int i=0; i < -nodesToAddRemove; i++) {
+            TopologyNode n = localTNodes[--currentNodes];
+            print("# deactivating node: " + n.getNodeID());
+            n.setActiveState(false);
+          }
         }
+        Thread.sleep(1000);
       }
+
+      for (TopologyNode localTNode: localTNodes) {
+        localTNode.setActiveState(false);
+      }
+
 
       print("@ end");
       print("# killing threads");
@@ -291,7 +291,7 @@ public class TopologyStatistics {
     try {
       File outfile = new File(basedir + "/out-" + addr.getIpAddress() + "-controller.log");
       outfile.createNewFile();
-      out = new PrintStream(outfile);
+      out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, true)));
     } catch (Exception e) {
       e.printStackTrace();
       System.exit(1);

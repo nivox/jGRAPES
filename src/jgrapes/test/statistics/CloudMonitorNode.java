@@ -10,6 +10,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jgrapes.JGrapesException;
+import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
 
 public class CloudMonitorNode extends Thread {
 
@@ -114,5 +117,58 @@ public class CloudMonitorNode extends Thread {
       print("@ exception: " + e.getMessage());
       e.printStackTrace();
     }
+  }
+
+  public static void main(String args[]) throws Exception {
+    String filename = null;
+    String host = null;
+    String user = null;
+    String db = null;
+    String pass = null;
+
+    try {
+      filename = args[0];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      System.out.println("Missing parameter out filename");
+      System.exit(1);
+    }
+
+    try {
+      host = args[1];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      System.out.println("Missing parameter mysql host");
+      System.exit(1);
+    }
+
+    try {
+      user = args[2];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      System.out.println("Missing parameter mysql user");
+      System.exit(1);
+    }
+
+    try {
+      db = args[3];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      System.out.println("Missing parameter mysql db");
+      System.exit(1);
+    }
+
+    try {
+      pass = args[4];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      pass = "";
+    }
+
+    String chConf = String.format("mysql_host=%s,mysql_user=%s,mysql_pass=%s,mysql_db=%s",
+                                  host, user, pass, db);
+
+    File outfile = new File(filename);
+    outfile.createNewFile();
+    PrintStream out;
+    out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, true)));
+    CloudMonitorNode mn = new CloudMonitorNode(chConf, out, 1);
+    mn.start();
+    mn.join();
   }
 }

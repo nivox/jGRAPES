@@ -191,3 +191,41 @@ JNIEXPORT jbyteArray JNICALL Java_jgrapes_CloudHelper_recvFromCloud
 
   return receivedBytes;
 }
+
+JNIEXPORT jboolean JNICALL Java_jgrapes_CloudHelper_isCloudNode
+  (JNIEnv *env , jobject obj, jobject node)
+{
+  struct cloud_helper_context *ctx;
+  struct nodeID *native_node;
+  int res;
+
+  ctx = (struct cloud_helper_context *) get_CloudHelper_nativeID(env, obj);
+  if (!ctx) return JNI_FALSE;
+
+  native_node = createStructFromNodeID(env, node);
+  if (!native_node) return JNI_FALSE;
+
+  res = is_cloud_node(ctx, native_node);
+  nodeid_free(native_node);
+
+  if (res) return JNI_TRUE;
+  else return JNI_FALSE;
+}
+
+JNIEXPORT jobject JNICALL Java_jgrapes_CloudHelper_getCloudNodeImpl
+  (JNIEnv *env, jobject obj)
+{
+
+  struct cloud_helper_context *ctx;
+  struct nodeID *native_node;
+  jobject node;
+
+  ctx = (struct cloud_helper_context *) get_CloudHelper_nativeID(env, obj);
+  if (!ctx) return NULL;
+
+  native_node = get_cloud_node(ctx, 0);
+  node = createNodeIDFromStruct(env, native_node);
+  nodeid_free(native_node);
+
+  return node;
+}

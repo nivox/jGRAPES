@@ -19,16 +19,6 @@ class StatisticsTopologyNode extends TopologyNode {
     this.psConf = psConf;
   }
 
-  public void setActiveState(boolean state) {
-    if (state == true && activeState == false) {
-      try {
-        this.ps = JGrapes.newPeerSamplerInstance(nh, null, psConf);
-      } catch (JGrapesException e) { e.printStackTrace(); }
-    }
-
-    super.setActiveState(state);
-  }
-
   protected void logCache() {
     if (this.logTime == 0) return;
     if (System.currentTimeMillis() > this.lastLogTime + this.logTime) {

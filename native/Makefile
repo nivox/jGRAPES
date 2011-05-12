@@ -58,9 +58,13 @@ update-grapes:
 	@cd ${DELEGATE_HELPERS_SRC_DIR}; ${MAKE} PLATFORM=${PLATFORM} ${DELEGATE_HELPERS_TARGET}
 	@echo "Copying delegate_helpers..."
 	@mkdir -p ${DESTDIR}
+ifeq (${PLATFORM}, unix)
 	@cp -f ${DELEGATE_HELPERS_SRC_DIR}/*.so ${DESTDIR}
-	@cp -f ${DELEGATE_HELPERS_SRC_DIR}/*.dylib ${DESTDIR}
+endif
+ifeq (${PLATFORM}, darwin)
 
+	@cp -f ${DELEGATE_HELPERS_SRC_DIR}/*.dylib ${DESTDIR}
+endif
 
 clean:
 	rm -rf ${INCLUDE_DIR}/grapes/
