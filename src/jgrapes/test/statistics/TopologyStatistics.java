@@ -185,7 +185,10 @@ public class TopologyStatistics {
 
   private void print(String line) {
     System.out.println(line);
-    if (this.out != null) this.out.println(line);
+    if (this.out != null) {
+      this.out.println(line);
+      this.out.flush();
+    }
   }
 
 
@@ -281,6 +284,8 @@ public class TopologyStatistics {
         monitorNode.terminate();
         monitorNode.join();
       }
+
+      if (this.out != null) this.out.close();
 
     } catch (Exception e) {
       e.printStackTrace();
