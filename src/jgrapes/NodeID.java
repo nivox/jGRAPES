@@ -18,6 +18,7 @@ import java.net.UnknownHostException;
 public class NodeID {
   protected String ip;
   protected int port;
+  protected InetAddress inetAddress = null;
 
   /**
    * Creates an empty node
@@ -70,7 +71,7 @@ public class NodeID {
       throw new IllegalArgumentException("Invalid node address");
     }
 
-    InetAddress.getByName(addrComponents[0]);
+    this.inetAddress = InetAddress.getByName(addrComponents[0]);
 
     this.ip = addrComponents[0];
 
@@ -86,12 +87,14 @@ public class NodeID {
   }
 
   /**
-   * Return the InetSocketAddress for the current node
+   * Return the InetAddress for the current node
    *
-   * @return InetSocketAddress of current node
+   * @return InetAddress of current node
    */
-  public InetSocketAddress getSocketAddress() {
-    return InetSocketAddress.createUnresolved(ip, port);
+  public InetAddress getAddress() throws UnknownHostException {
+    if (inetAddress != null) return inetAddress;
+    inetAddress = InetAddress.getByName(ip);
+    return inetAddress;
   }
 
   /**
