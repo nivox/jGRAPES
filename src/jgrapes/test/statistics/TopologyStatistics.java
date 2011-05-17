@@ -154,7 +154,7 @@ public class TopologyStatistics {
           File outfile = new File(basedir + "/" + outpath);
           outfile.createNewFile();
           PrintStream out;
-          out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, true)));
+          out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, false)));
           localTNodes[i] = new StatisticsTopologyNode(localTNode, nhConf, psConf, chConf, 1, out);
         } catch (Exception e) {
           e.printStackTrace();
@@ -170,8 +170,9 @@ public class TopologyStatistics {
       try {
         File outfile = new File(outpath);
         outfile.createNewFile();
-        PrintStream pstream = new PrintStream(outfile);
-        monitorNode = new CloudMonitorNode (chConf, pstream, 1);
+        PrintStream out;
+        out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, false)));
+        monitorNode = new CloudMonitorNode (chConf, out, 1);
       } catch (Exception e) {
         e.printStackTrace();
         System.exit(1);
@@ -294,7 +295,7 @@ public class TopologyStatistics {
     try {
       File outfile = new File(basedir + "/out-" + addr.getIpAddress() + "-controller.log");
       outfile.createNewFile();
-      out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, true)));
+      out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, false)));
     } catch (Exception e) {
       e.printStackTrace();
       System.exit(1);
