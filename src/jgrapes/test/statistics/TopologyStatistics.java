@@ -5,23 +5,21 @@
  */
 package jgrapes.test.statistics;
 
-import java.io.BufferedReader;
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.net.UnknownHostException;
 
+import jgrapes.JGrapesException;
+import jgrapes.NodeID;
+import jgrapes.test.TopologyNode;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import jgrapes.JGrapesException;
-import jgrapes.NodeID;
-import jgrapes.test.TopologyNode;
 
 
 public class TopologyStatistics {
@@ -155,9 +153,9 @@ public class TopologyStatistics {
           String outpath = String.format("out-%s_%d.log", addr.getIpAddress(), (addr.getPort()+i));
           File outfile = new File(basedir + "/" + outpath);
           outfile.createNewFile();
-
-          PrintStream pstream = new PrintStream(outfile);
-          localTNodes[i] = new StatisticsTopologyNode(localTNode, nhConf, psConf, chConf, 1, pstream);
+          PrintStream out;
+          out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, true)));
+          localTNodes[i] = new StatisticsTopologyNode(localTNode, nhConf, psConf, chConf, 1, out);
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -296,7 +294,7 @@ public class TopologyStatistics {
     try {
       File outfile = new File(basedir + "/out-" + addr.getIpAddress() + "-controller.log");
       outfile.createNewFile();
-      out = new PrintStream(outfile);
+      out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outfile, true)));
     } catch (Exception e) {
       e.printStackTrace();
       System.exit(1);
