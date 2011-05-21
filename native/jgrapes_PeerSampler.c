@@ -232,8 +232,7 @@ JNIEXPORT jobjectArray JNICALL Java_jgrapes_PeerSampler_getMetadata
     return NULL; /* exception thrown */
   }
 
-  jMetadataArray = (*env)->NewObjectArray(env, metadata_size, byteArrayClass,
-                                          NULL);
+  jMetadataArray = (*env)->NewObjectArray(env, node_nr, byteArrayClass, NULL);
   (*env)->DeleteLocalRef(env, byteArrayClass);
   if (jMetadataArray == NULL) {
     return NULL; /* exception thrown */
@@ -249,13 +248,14 @@ JNIEXPORT jobjectArray JNICALL Java_jgrapes_PeerSampler_getMetadata
       return NULL;
     }
 
-    (*env)->SetByteArrayRegion(env, jMetadata, i*metadata_size,
-                               metadata_size, metadata);
+    (*env)->SetByteArrayRegion(env, jMetadata, 0, metadata_size,
+                               metadata + (i*metadata_size));
 
     if ((*env)->ExceptionCheck(env)) {
       (*env)->DeleteLocalRef(env, jMetadataArray);
       return NULL;
     }
+    (*env)->SetObjectArrayElement(env, jMetadataArray, i, jMetadata);
   }
 
   return jMetadataArray;
