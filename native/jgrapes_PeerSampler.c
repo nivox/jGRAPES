@@ -224,8 +224,8 @@ JNIEXPORT jobjectArray JNICALL Java_jgrapes_PeerSampler_getMetadata
   ps = (struct psample_context *) get_PeerSampler_nativeID(env, obj);
   if (!ps) return NULL;
 
-  metadata = (const int8_t *) psample_get_metadata(ps, &metadata_size);
   cache = psample_get_cache(ps, &node_nr);
+  metadata = (const int8_t *) psample_get_metadata(ps, &metadata_size);
 
   byteArrayClass = (*env)->FindClass(env, "[B");
   if (byteArrayClass == NULL) {
