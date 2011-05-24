@@ -18,6 +18,7 @@ public class CloudMonitorNode extends Thread {
   protected Connection conn;
   protected PrintStream out;
   protected int logtime;
+  private String mysql_table;
 
   private volatile boolean terminated = false;
 
@@ -55,6 +56,11 @@ public class CloudMonitorNode extends Thread {
     if (!m.find()) throw new JGrapesException("MonitorMode: cannot parse mysql_pass cloud conf");
     mysql_db = m.group(1);
 
+    p = Pattern.compile("mysql_table=([^,]+)");
+    m = p.matcher(chConf);
+    if (!m.find()) throw new JGrapesException("MonitorMode: cannot parse mysql_table cloud conf");
+    mysql_table = m.group(1);
+
     try{
       Class.forName("com.mysql.jdbc.Driver");
     } catch (ClassNotFoundException e) {
@@ -83,14 +89,14 @@ public class CloudMonitorNode extends Thread {
       Statement stmt = conn.createStatement();
 
       print("# Initializing cloud...");
-      stmt.executeUpdate("UPDATE cloud SET cloud_value='', timestamp=0, counter=0 WHERE cloud_key='view'");
+      stmt.executeUpdate("UPDATE " + mysql_table +" SET cloud_value='', cloud_timestamp=0, counter=0 WHERE cloud_key='view'");
 
       long lastCounter = -1;
       while (!terminated) {
-        ResultSet rs = stmt.executeQuery("SELECT timestamp, counter FROM cloud WHERE cloud_key='view'");
+        ResultSet rs = stmt.executeQuery("SELECT cloud_timestamp, counter FROM " + mysql_table +" WHERE cloud_key='view'");
 
         if (rs.next()) {
-          long timestamp = rs.getLong("timestamp") * 1000;
+          long timestamp = rs.getLong("cloud_timestamp") * 1000;
           long counter = rs.getLong("counter");
           if (lastCounter != counter) {
             if (lastCounter < 0) lastCounter = 0;
